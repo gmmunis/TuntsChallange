@@ -14,7 +14,7 @@ var NotaFinal = 0;
 var Situacao;
 var NotaF;
 
-console.error('Aluno | Faltas | P1 | P2 | P3 | Situação | Nota para Aprovação Final');
+console.log('Aluno | Faltas | P1 | P2 | P3 | Situação | Nota para Aprovação Final');
 const accessSheet = async () => {
   const doc = new GoogleSpreadsheet(docId);
   await promisify(doc.useServiceAccountAuth)(credentials);
@@ -33,37 +33,38 @@ const accessSheet = async () => {
     Situacao = row._ckd7g == undefined ? "" : row._ckd7g;
     NotaFinal = row._clrrx == undefined ? "" : row._clrrx;
 
-    media = (p1 + p2 + p3) / 3;
+    p1 = parseInt(p1);
+    p2 = parseInt(p2);
+    p3 = parseInt(p3);
 
-    media = parseInt(media);
+
+    media = (p1 + p2 + p3) / 30;
+
+    //console.log('Media => '+media)
 
     percentualfaltasGui = (faltas * 100) / 60;
 
     percentualfaltas = parseInt(faltas / 60 * 100);
 
-    if (media < 5) {
-
-      Situacao = 'Reprovado';
-
-      NotaF = NotaFinal;
-
-    } else if (media <= 5 && media < 7) {
+    if (media >= 5 && media < 7) {
 
       Situacao = 'Exame Final';
 
-      NotaF = NotaFinal;
+
+    } else if (media < 5) {
+
+      Situacao = 'Reprovado por Nota';
+
 
     } else if ((media >= 7) && (percentualfaltas <= 25)) {
 
       Situacao = "Aprovado";
 
-      NotaF = 0;
+      NotaFinal = 0;
 
     } else {
 
       Situacao = "Reprovado por falta";
-
-      NotaF = NotaFinal;
 
     }
     console.log(aluno + ' | ' + faltas + ' | ' + p1 + ' | ' + p2 + ' | ' + p3 + ' | ' + Situacao + ' | ' + NotaFinal);
